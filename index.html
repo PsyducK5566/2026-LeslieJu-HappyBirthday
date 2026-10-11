@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" class="no-js">
 
 <head>
   <meta charset="UTF-8">
@@ -11,6 +11,8 @@
   <!-- 字型自行託管，不依賴任何外部網域（Google Fonts 在部分地區無法連線） -->
   <link rel="preload" href="fonts/great-vibes-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="style.css">
+  <!-- 有 JS 才啟用開場按鈕；JS 失敗時直接顯示完整祝福頁，不會卡在按鈕 -->
+  <script>document.documentElement.className = document.documentElement.className.replace("no-js", "js");</script>
 </head>
 
 <body>
@@ -58,10 +60,47 @@
     </defs>
   </svg>
 
-  <main class="stage">
+  <!-- 開場：儀式按鈕 + 小狐狸（《小王子》第 21 章彩蛋） -->
+  <section class="intro" id="intro" aria-label="開場">
+    <div class="intro__track">
+      <svg class="fox" id="fox" viewBox="26 5 86 111" aria-hidden="true" focusable="false">
+        <g class="fox__tail">
+          <path class="fox__fur" d="M58 110 C80 114 104 104 108 84 C111 70 104 60 96 58 C100 70 98 86 84 94 C76 99 66 100 58 98 Z" />
+          <path class="fox__light" d="M96 58 C104 60 111 70 108 84 C106 76 102 68 96 58 Z" />
+        </g>
+        <path class="fox__fur" d="M50 50 C36 56 30 80 32 100 C33 108 40 112 50 112 C60 112 67 108 68 100 C70 80 64 56 50 50 Z" />
+        <path class="fox__light" d="M50 58 C43 64 41 80 44 96 C46 102 54 102 56 96 C59 80 57 64 50 58 Z" />
+        <ellipse class="fox__light" cx="43" cy="111" rx="5" ry="3" />
+        <ellipse class="fox__light" cx="57" cy="111" rx="5" ry="3" />
+        <g class="fox__ear fox__ear--l">
+          <path class="fox__fur" d="M31 31 L30 8 L45 27 Z" />
+          <path class="fox__dark" d="M33 27 L32.5 15 L41 25.5 Z" />
+        </g>
+        <g class="fox__ear fox__ear--r">
+          <path class="fox__fur" d="M69 31 L70 8 L55 27 Z" />
+          <path class="fox__dark" d="M67 27 L67.5 15 L59 25.5 Z" />
+        </g>
+        <path class="fox__fur" d="M30 30 C32 44 42 56 50 58 C58 56 68 44 70 30 C64 26 56 26 50 28 C44 26 36 26 30 30 Z" />
+        <path class="fox__light" d="M37 40 C41 48 46 54 50 58 C54 54 59 48 63 40 C58 43 54 45 50 45 C46 45 42 43 37 40 Z" />
+        <path class="fox__eye" d="M38 37 Q41 34 44 37" />
+        <path class="fox__eye" d="M56 37 Q59 34 62 37" />
+        <circle class="fox__nose" cx="50" cy="56" r="2.4" />
+      </svg>
+    </div>
+    <button class="rite-btn" id="rite-btn" type="button">One must observe the proper rites.</button>
+  </section>
+
+  <!-- 過場句：點擊按鈕後浮現（點一下可略過） -->
+  <section class="interlude" id="interlude" aria-live="polite" hidden>
+    <p class="interlude__quote" id="interlude-quote">They are what make one day different from other days, one hour from other hours.</p>
+    <p class="interlude__coda" id="interlude-coda">Today is that day.</p>
+  </section>
+
+  <main class="stage" id="stage" tabindex="-1">
 
     <h1 class="title reveal" style="--delay:.1s">
       Happy Birthday
+      <!-- 壓軸：在祝福語之後才由模糊轉清晰浮現 -->
       <span class="title__name">My Goddess</span>
     </h1>
 
@@ -89,6 +128,22 @@
 
     <section class="message reveal" style="--delay:.85s">
       <p>天秤座的妳總是帶給身邊的人溫暖與平衡，<br>願妳的生日如同這片風景和非洲菊一樣，<br>永遠燦爛美麗...</p>
+
+      <!-- 彩蛋：玻璃罩下的花（小王子的玫瑰，這裡換成妳的非洲菊） -->
+      <div class="dome-wrap">
+        <div class="dome" aria-hidden="true">
+          <svg viewBox="0 0 60 80" focusable="false">
+            <path class="dome__stem" d="M30 68 L30 40" />
+            <path class="dome__leaf" d="M30 58 C36 52 42 53 44 55 C40 59 35 60 30 58 Z" />
+            <path class="dome__leaf" d="M30 52 C25 47 20 48 18 50 C22 54 26 54 30 52 Z" />
+            <use class="dome__flower" href="#gerbera" transform="translate(30 37) scale(.22)" />
+            <path class="dome__glass" d="M11 69 L11 33 C11 9 49 9 49 33 L49 69 Z" />
+            <path class="dome__shine" d="M17 60 L17 34 C17 22 22 17 27 15" />
+            <circle class="dome__knob" cx="30" cy="12" r="3" />
+            <rect class="dome__base" x="6" y="68" width="48" height="7" rx="3.5" />
+          </svg>
+        </div>
+      </div>
     </section>
 
   </main>

@@ -15,6 +15,11 @@
   var petals = [], sparkles = [];
   var rafId = null;
 
+  // 彩蛋：B-612 小行星偶爾緩緩飄過
+  var planet = null;
+  var nextPlanetAt = rand(12, 20);   // 秒（以動畫累計時間計）
+  var clock = 0;
+
   var PETAL_COLORS = ["#F48FB1", "#F8BBD0", "#FFFFFF", "#FCE4EC", "#EC407A"];
 
   function rand(min, max) { return min + Math.random() * (max - min); }
@@ -107,6 +112,90 @@
     ctx.restore();
   }
 
+  // B-612：帶兩座小火山與一朵小玫瑰的小星球
+  function makePlanet() {
+    var r = rand(20, 28);
+    var ltr = Math.random() < 0.5;
+    return {
+      r: r,
+      x: ltr ? -r * 3 : W + r * 3,
+      dir: ltr ? 1 : -1,
+      baseY: rand(H * 0.12, H * 0.45),
+      speed: Math.max(W / 40, 24),   // 約 40 秒橫越畫面
+      angle: rand(0, Math.PI * 2),
+      spin: rand(0.08, 0.16) * (ltr ? 1 : -1),
+      phase: rand(0, Math.PI * 2)
+    };
+  }
+
+  function drawPlanet(pl, t) {
+    var r = pl.r;
+    var y = pl.baseY + Math.sin(t * 0.4 + pl.phase) * 14;
+    ctx.save();
+    ctx.translate(pl.x, y);
+    ctx.globalAlpha = 0.6;
+
+    var glow = ctx.createRadialGradient(0, 0, r * 0.8, 0, 0, r * 2.2);
+    glow.addColorStop(0, "rgba(255,255,255,.55)");
+    glow.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(0, 0, r * 2.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.rotate(pl.angle);
+
+    // 地表上的小東西：兩座火山、一朵玫瑰
+    function onSurface(deg, draw) {
+      ctx.save();
+      ctx.rotate(deg * Math.PI / 180);
+      ctx.translate(0, -r + 1);
+      draw();
+      ctx.restore();
+    }
+    ctx.fillStyle = "#7986CB";
+    [-62, -38].forEach(function (deg) {
+      onSurface(deg, function () {
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.2, 0);
+        ctx.lineTo(-r * 0.08, -r * 0.24);
+        ctx.lineTo( r * 0.08, -r * 0.24);
+        ctx.lineTo( r * 0.2, 0);
+        ctx.closePath();
+        ctx.fill();
+      });
+    });
+    onSurface(28, function () {
+      ctx.strokeStyle = "#6A9F58";
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(0, -r * 0.42);
+      ctx.stroke();
+      ctx.fillStyle = "#EC407A";
+      ctx.beginPath();
+      ctx.arc(0, -r * 0.48, r * 0.14, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    var body = ctx.createRadialGradient(-r * 0.35, -r * 0.35, r * 0.1, 0, 0, r);
+    body.addColorStop(0, "#F3E5F5");
+    body.addColorStop(1, "#9FA8DA");
+    ctx.fillStyle = body;
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "rgba(26,35,126,.12)";
+    [[0.3, 0.2, 0.18], [-0.35, 0.35, 0.12], [0.05, -0.3, 0.1]].forEach(function (c) {
+      ctx.beginPath();
+      ctx.arc(c[0] * r, c[1] * r, c[2] * r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    ctx.restore();
+  }
+
   var last = 0;
   function frame(now) {
     rafId = requestAnimationFrame(frame);
@@ -116,6 +205,20 @@
     var t = now / 1000;
 
     ctx.clearRect(0, 0, W, H);
+
+    // 小行星畫在最底層，花瓣與微光從它前面飄過
+    clock += dt;
+    if (!planet && clock >= nextPlanetAt) planet = makePlanet();
+    if (planet) {
+      planet.x += planet.speed * planet.dir * dt;
+      planet.angle += planet.spin * dt;
+      if (planet.x < -planet.r * 4 || planet.x > W + planet.r * 4) {
+        planet = null;
+        nextPlanetAt = clock + rand(30, 55);
+      } else {
+        drawPlanet(planet, t);
+      }
+    }
 
     for (var i = 0; i < petals.length; i++) {
       var p = petals[i];
@@ -168,4 +271,76 @@
 
   resize();
   start();
+})();
+
+
+/* ===========================================================
+   開場流程：儀式按鈕 → 過場句 → 祝福頁
+   彩蛋出自《小王子》第 21 章的狐狸：
+   - 狐狸每隔一段時間「坐得更靠近一點」
+   - 下午三點到四點之間打開，過場句會換成「四點鐘」那段話
+   - 祝福語左下角的玻璃罩（花瓣背景裡另有 B-612 小行星）
+   =========================================================== */
+(function () {
+  "use strict";
+
+  var body = document.body;
+  var intro = document.getElementById("intro");
+  var btn = document.getElementById("rite-btn");
+  var fox = document.getElementById("fox");
+  var interlude = document.getElementById("interlude");
+  var stage = document.getElementById("stage");
+  if (!intro || !btn || !interlude || !stage) return;
+
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var INTRO_FADE = reduceMotion ? 0 : 800;
+  var INTERLUDE_HOLD = 5600;   // 過場句停留時間（含兩行的淡入）
+  var INTERLUDE_FADE = reduceMotion ? 0 : 900;
+
+  // 狐狸：每 7 秒靠近一步，共 6 步
+  var step = 0;
+  var foxTimer = fox ? setInterval(function () {
+    step++;
+    fox.style.setProperty("--step", step);
+    if (step >= 6) clearInterval(foxTimer);
+  }, 7000) : null;
+
+  // 四點鐘彩蛋
+  if (new Date().getHours() === 15) {
+    document.getElementById("interlude-quote").textContent =
+      "If you come at four o'clock in the afternoon, then at three o'clock I shall begin to be happy.";
+    document.getElementById("interlude-coda").textContent = "It's almost four o'clock.";
+  }
+
+  var holdTimer = null;
+  var opened = false;
+
+  function openStage() {
+    if (opened) return;
+    opened = true;
+    clearTimeout(holdTimer);
+    interlude.classList.add("is-leaving");
+    setTimeout(function () {
+      interlude.hidden = true;
+      body.classList.add("is-open");
+      stage.focus({ preventScroll: true });
+    }, INTERLUDE_FADE);
+  }
+
+  btn.addEventListener("click", function () {
+    btn.disabled = true;
+    if (foxTimer) clearInterval(foxTimer);
+    intro.classList.add("is-leaving");
+    setTimeout(function () {
+      intro.hidden = true;
+      interlude.hidden = false;
+      holdTimer = setTimeout(openStage, INTERLUDE_HOLD);
+    }, INTRO_FADE);
+  }, { once: true });
+
+  // 過場句可點一下或按任意鍵略過
+  interlude.addEventListener("click", openStage);
+  document.addEventListener("keydown", function () {
+    if (!interlude.hidden) openStage();
+  });
 })();
