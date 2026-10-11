@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Happy Birthday</title>
+<meta name="description" content="獻給天秤座的妳，一份溫暖而平衡的生日祝福。">
+<meta name="theme-color" content="#E0F7FA">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- 飄落花瓣 / 微光粒子 -->
+<canvas id="petal-canvas" aria-hidden="true"></canvas>
+
+<!-- 非洲菊圖形定義（供下方 <use> 重複引用） -->
+<svg class="sprite" aria-hidden="true" focusable="false" width="0" height="0">
+  <defs>
+    <path id="petal-outer" d="M0,-8 C5,-20 5,-36 0,-46 C-5,-36 -5,-20 0,-8 Z"/>
+    <path id="petal-inner" d="M0,-6 C4,-14 4,-25 0,-32 C-4,-25 -4,-14 0,-6 Z"/>
+    <g id="gerbera">
+      <g class="gerbera__outer">
+        <use href="#petal-outer" transform="rotate(0)"/>
+        <use href="#petal-outer" transform="rotate(30)"/>
+        <use href="#petal-outer" transform="rotate(60)"/>
+        <use href="#petal-outer" transform="rotate(90)"/>
+        <use href="#petal-outer" transform="rotate(120)"/>
+        <use href="#petal-outer" transform="rotate(150)"/>
+        <use href="#petal-outer" transform="rotate(180)"/>
+        <use href="#petal-outer" transform="rotate(210)"/>
+        <use href="#petal-outer" transform="rotate(240)"/>
+        <use href="#petal-outer" transform="rotate(270)"/>
+        <use href="#petal-outer" transform="rotate(300)"/>
+        <use href="#petal-outer" transform="rotate(330)"/>
+      </g>
+      <g class="gerbera__inner">
+        <use href="#petal-inner" transform="rotate(15)"/>
+        <use href="#petal-inner" transform="rotate(45)"/>
+        <use href="#petal-inner" transform="rotate(75)"/>
+        <use href="#petal-inner" transform="rotate(105)"/>
+        <use href="#petal-inner" transform="rotate(135)"/>
+        <use href="#petal-inner" transform="rotate(165)"/>
+        <use href="#petal-inner" transform="rotate(195)"/>
+        <use href="#petal-inner" transform="rotate(225)"/>
+        <use href="#petal-inner" transform="rotate(255)"/>
+        <use href="#petal-inner" transform="rotate(285)"/>
+        <use href="#petal-inner" transform="rotate(315)"/>
+        <use href="#petal-inner" transform="rotate(345)"/>
+      </g>
+      <circle class="gerbera__disc" cx="0" cy="0" r="11"/>
+      <circle class="gerbera__eye" cx="0" cy="0" r="6"/>
+    </g>
+  </defs>
+</svg>
+
+<main class="stage">
+
+  <h1 class="title reveal" style="--delay:.1s">Happy Birthday</h1>
+
+  <div class="photo-wrap reveal" style="--delay:.45s">
+    <!-- 左上角裝飾 -->
+    <svg class="deco deco--tl" viewBox="-50 -50 100 100" aria-hidden="true" focusable="false"><use href="#gerbera"/></svg>
+    <!-- 右下角裝飾 -->
+    <svg class="deco deco--br" viewBox="-50 -50 100 100" aria-hidden="true" focusable="false"><use href="#gerbera"/></svg>
+    <!-- 小花點綴 -->
+    <svg class="deco deco--tl-s" viewBox="-50 -50 100 100" aria-hidden="true" focusable="false"><use href="#gerbera"/></svg>
+    <svg class="deco deco--br-s" viewBox="-50 -50 100 100" aria-hidden="true" focusable="false"><use href="#gerbera"/></svg>
+
+    <figure class="frame">
+      <img src="picture/photo.jpg" alt="壽星在花園中與粉紅色偉士牌的合影">
+    </figure>
+  </div>
+
+  <section class="message reveal" style="--delay:.85s">
+    <p>天秤座的妳總是帶給身邊的人溫暖與平衡，<br>願妳的生日如同這片風景和非洲菊一樣，<br>永遠燦爛美麗..</p>
+  </section>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
