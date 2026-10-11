@@ -29,7 +29,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(1.25rem, 5vw, 3.5rem) clamp(1rem, 4vw, 2.5rem);
+  padding: clamp(1rem, 3.5svh, 2.75rem) clamp(1rem, 4vw, 2.5rem);
   background: linear-gradient(135deg, var(--blue-soft), var(--rose-soft));
   background-attachment: fixed;
   color: var(--ink);
@@ -73,7 +73,7 @@ body::before {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(1.5rem, 4vw, 2.75rem);
+  gap: clamp(1.25rem, 3.2vw, 2.25rem);
   text-align: center;
 }
 
@@ -83,7 +83,8 @@ body::before {
   margin: 0;
   font-family: "Great Vibes", "Brush Script MT", "Segoe Script", cursive;
   font-weight: 400;
-  font-size: clamp(2.9rem, 12vw, 5.75rem);
+  /* 同時受寬度與高度限制，矮視窗時標題自動縮小以容下整頁 */
+  font-size: clamp(2.5rem, min(11vw, 9.5svh), 5.5rem);
   line-height: 1.1;
   color: var(--ink);
   letter-spacing: .02em;
@@ -124,7 +125,7 @@ body::before {
   height: auto;
   max-width: 100%;
   /* 讓照片隨視窗高度縮放，整頁在一螢幕內看完 */
-  max-height: clamp(200px, 44svh, 420px);
+  max-height: clamp(190px, 40svh, 390px);
   border-radius: 2px;
 }
 
@@ -240,4 +241,13 @@ body::before {
   .deco   { animation: none; }
   .frame  { transition: none; }
   #petal-canvas { display: none; }
+}
+
+/* 標題下方的名字副行 */
+.title__name {
+  display: block;
+  margin-top: .12em;
+  font-size: .56em;              /* 相對主標題縮小，維持主從層次 */
+  color: var(--petal-deep);
+  text-shadow: 0 2px 10px rgba(255, 255, 255, .9);
 }
